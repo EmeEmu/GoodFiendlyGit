@@ -1,5 +1,5 @@
 # GoodFiendlyGit
-
+![diagram image](https://raw.githubusercontent.com/EmeEmu/GoodFiendlyGit/refs/heads/main/assets/distribution_schema.png)
 
 
 
