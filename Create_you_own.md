@@ -77,30 +77,23 @@ git annex wanted . standard
 git annex group . manual
 ```
 
-And now we can sync the 2 repos:
+And now we can sync the 2 repos: **?Unsure why --content is needed here? The prefered content from the data_server should auto-pull the content it doesn't have no ?**
 ```bash
-git annex sync --content
+git annex sync data_server --content
 ```
-
-
-
-
-
-
-
-
 
 ## GitHub Setup
 
-Let's start by adding GitHub as a remote. Since GitHub is not well suited to store large data files, we will exclude the annexed data from being pushed there.
+Let's add GitHub as a remote for the repo. You first have to create an empty repo on the GitHub website.  
+Since GitHub is not well suited to store large data files, we will exclude the annexed data from being pushed there.
 ```bash
-git remote add github git@github.com:username/my_repo.git
-git config remote.github.annex-ignore true
+git remote add origin git@github.com:username/my_repo.git
+git config remote.origin.annex-ignore true
 ```
 
 We can now push our initial commit to GitHub
 ```bash
-git push github main
+git push origin main git-annex
 ```
 
 ## Backup Setup
@@ -108,8 +101,8 @@ git push github main
 Now we will create a backup repository on an external disk mounted at `/mnt/backup_drive`. This backup will be used to store a copy of both the data files and the code files.  
 ```bash
 cd /mnt/backup_drive
-git clone /path/to/my_repo my_repo_backup
-cd my_repo_backup
+git clone --bare /path/to/my_repo my_repo_backup.git
+cd my_repo_backup.git
 git annex init "backup"
 ```
 Now back in our local repository, we will add the backup as a remote, and we will sync the 2 repositories.
@@ -123,29 +116,29 @@ git annex sync backup --content
 
 
 
+# Usage
 
+## Second user
 
-
-
-
-
-
-
-
-We will now add a remote for the data repository. This repository will be used to store the data files. Here we give an example for a remote server accessible through ssh.  
-First ssh into the server and create a new repository.
+If you or a collaborator want to use the repository on another computer, you can clone the repository from GitHub.  
 ```bash
-ssh username@server
-server$ mkdir my_repo_data.git
-server$ cd my_repo_data.git
-server$ git init --bare
+git clone git@github.com:username/my_repo.git
+cd my_repo
 ```
-Then go back to your local computer and add the remote
+
+This will download the code files and the symlinks of data files, but not the datafiles themselves. To get the data files, we need to initialize `git-annex` and syncronize the repository with the data_server.
 ```bash
-git remote add data_server username@server:/path/to/my_repo_data.git
+git annex init "second_user"
+git config annex.sshcaching true
+git config remote.origin.annex-ignore true
+git annex sync
 ```
-Now we can push the data files to the data repository
-```bash
-git push data_server main
-git annex sync data_server --content
-```
+As you can see we initialized `git-annex` with the label `second_user`, this is not mendatory but is usefule to keep track of which user has a copy of which data file. This is usefull to know who has the data files on their computer and who doesn't. We also enabled ssh caching for faster access to the data_server (again this is not mendatory). And we specified to the repo not to send annex data to GitHub.   
+Even tho we havn't explained to this repo where to find the data, it already knows about the `data_server` thanks to the `autoenable=true` option we used when creating the `data_server` special remote. This user will therefore be able to `git annex get <file>` any file.
+
+
+
+
+
+
+
