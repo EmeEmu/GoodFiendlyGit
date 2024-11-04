@@ -2,7 +2,7 @@
 work_name="GitTutorialWorkDir"
 data_server="ljp@134.157.132.30"
 dir_on_data_server="/home/ljp/SERVER/"
-github_repo="git@github.com:EmeEmu/test_repo2.git"
+github_repo="git@github.com:EmeEmu/GFG_tutorial.git"
 
 
 # ======= Local setup =======
