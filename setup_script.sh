@@ -1,8 +1,8 @@
 # parameters
 work_name="GitTutorialWorkDir"
-data_server="mkk@127.0.0.1"
-dir_on_data_server="$HOME/$work_name/SERVER/"
-github_repo="git@github.com:EmeEmu/test_repo.git"
+data_server="ljp@134.157.132.30"
+dir_on_data_server="/home/ljp/SERVER/"
+github_repo="git@github.com:EmeEmu/test_repo2.git"
 
 
 # ======= Local setup =======
@@ -23,7 +23,7 @@ git init
 git branch -M main
 
 # setup git-annex
-git annex init "main_repo"
+git annex init "main_repo_matteo"
 
 # setup gitattributes
 echo "* annex.largefiles=largerthan=100kb" > .gitattributes
@@ -35,6 +35,11 @@ git commit -m "Add .gitattributes file to track large files with git-annex"
 # parametrize git annex
 git annex config --set annex.numcopies 2
 git config annex.sshcaching true
+
+# add the README
+cp $scr_dir/assets/tutorial_README.md ./README.md
+git add README.md
+git commit -m "Add README"
 
 # put some data in the repo
 mkdir images
@@ -51,7 +56,8 @@ echo "Setting up data server at $data_server:$dir_on_data_server"
 ssh $data_server "mkdir -p $dir_on_data_server"
 
 # setup a bare git repository on the data server + git annex
-ssh $data_server "cd $dir_on_data_server && git init --bare repo_data.git && cd repo_data.git && git branch -M main && git annex init 'data_server' && git annex wanted . standard && git annex group . backup"
+# ssh $data_server "cd $dir_on_data_server && git init --bare repo_data.git && cd repo_data.git && git branch -M main && git annex init 'data_server' && git annex wanted . standard && git annex group . backup"
+ssh $data_server "cd $dir_on_data_server && git init --bare repo_data.git && cd repo_data.git && git annex init 'data_server' && git annex wanted . standard && git annex group . backup"
 
 # connect the data server as a remote
 git annex initremote data_server type=git location=ssh://$data_server$dir_on_data_server/repo_data.git autoenable=true
@@ -75,7 +81,7 @@ git clone --bare $work_dir/main_repo main_repo_backup.git
 cd main_repo_backup.git
 
 # setup git annex
-git annex init "backup"
+git annex init "backup_matteo"
 
 # connect the backup as a remote
 cd $work_dir/main_repo

@@ -80,10 +80,12 @@ git pull origin
 ```
 And now you can push your changes again with `git push origin`.
 
-GitHub will now have you text file and the symlinked image. However the actual image is still on your computer. To share it, you need to sync the annex with the remote server :
+GitHub will now have you text file and the symlinked image. However the actual image is still on your computer. To share it, you need to sync the annex with the remote server and copy it to the server :
 ```bash
 git annex sync
+git annex copy --to data_server images/your_image.png
 ```
+(Notice, in this tutorial we are using an older version of `git annex` on the server. Hence the need for the second line. With an up to date version, and given the configuration that was done in the background, `git annex sync` would copy the image to the server automatically. This is because the server was setup to always require all the data).
 
 At any point, if you want to know who as the actual images, you can run :
 ```bash
