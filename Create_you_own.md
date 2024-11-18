@@ -140,5 +140,71 @@ Even tho we havn't explained to this repo where to find the data, it already kno
 
 
 
+# Submodules
+
+## Adding a submodule to an existing repo
+```bash
+git submodule add git@github.com:username/my_submodule.git
+git commit -am "Add submodule my_submodule"
+git push origin main
+```
+
+## Cloning a repo with submodules
+```bash
+git clone --recurse-submodules git@github.com:username/my_repo.git
+```
+
+If you forgot to use `--recurse-submodules` when cloning, you can still get the submodules with
+```bash
+git submodule update --init --recursive
+```
+
+## Pulling changes containing submodule addition(s)
+If a collaborator adds a submodule to the repo, you will need to pull the changes and then update the submodules
+```bash
+git pull
+git submodule update --init --recursive
+```
+
+## Updating a submodule
+By default, a submodule is in a detached HEAD state. To update the submodule to the latest commit on its `main` branch, you can do
+```bash
+git submodule update --remote my_submodule
+git commit -am "Update submodule my_submodule"
+```
+
+## Modifying a submodule from the main repo
+While working on `my_repo`, you might need to make changes to `my_submodule`. To do so, you need to navigate to the submodule directory and work from there. However, the submodule is in detatched state by default, so in order to track modifications you'll need to checkout a branch (here will'll work on the `main` branch of `my_submodule)`).
+```bash
+cd my_submodule
+git checkout main
+```
+Now we need to explain to git what to do when the submodule is modified. First we'll perform a merge in case there are modifications on the remote which we don't have localy.
+```bash
+cd ..
+git submodule update --remote --merge my_submodule
+```
+Now we can go back to the submodule directory and make our modifications. Once we are done, we can commit the changes and push them to the submodule's remote.
+```bash
+cd my_submodule
+# make changes
+git commit -am "Update submodule"
+git push origin main
+```
+WARNING : If changes were made on the remote of the submodule in the mean time, this might cause problems. Please refer to [this page (section : Working on a Submodule)](https://git-scm.com/book/en/v2/Git-Tools-Submodules) if this risk exists in your workflow, or if you add a problem and want a solution.  
+
+Now let's go back to the main repo and commit the changes to the submodule.
+```bash
+cd ..
+git push --recurse-submodules=check
+```
+
+Alternatively, you can also modify and commit (but not push) in the submodule, and then push from `my_repo` with
+```bash
+git push --recurse-submodules=on-demand
+```
+
+
+
 
 
